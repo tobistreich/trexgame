@@ -25,9 +25,9 @@ function createPlayer() {
 
 function createObstacle() {
     return {
-        x: 800,
+        x: canvas.width,
         y: (canvas.height / 4) * 3,
-        width: Math.random() * (50 - 10) + 10,
+        width: Math.random() * (70 - 5) + 5,
         height: 20,
         color: '#FFF',
         speed: -2,
@@ -36,8 +36,11 @@ function createObstacle() {
 
 function spawnNewObstacle() {
     if (obstacle.x <= -50) {
-        removeObstacle();
         obstacle = createObstacle();
+    }
+
+    if (!gameStarted) {
+        obstacle.width = Math.random() * (70 - 5) + 5;
     }
 }
 
@@ -134,6 +137,10 @@ function moveObstacle() {
     }
 }
 
+function resetObstacleSpeed() {
+    obstacle.speed = -2;
+}
+
 function jump() {
     if (!isJumping) {
         player.y -= player.jumpHeight;
@@ -141,7 +148,7 @@ function jump() {
         setTimeout(() => {
             player.y += player.jumpHeight;
             isJumping = false;
-        }, 700);
+        }, 600);
     }
 }
 
@@ -156,10 +163,12 @@ function checkHit() {
         createGameOverHeading();
         removeScore();
         removeObstacle();
+        resetObstacleSpeed();
         gameStarted = false;
-    }
-    if () {
+    } else if (obstacle.x + obstacle.width < player.x - 40) {
         score += 10;
+        removeObstacle();
+        obstacle.speed *= 1.08;
     }
 }
 
