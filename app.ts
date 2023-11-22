@@ -3,11 +3,14 @@ const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
 let gameStarted = false;
 let score = 0;
+let isJumping = false;
 
 const player = createPlayer();
-const obstacle = createObstacle();
+let obstacle = createObstacle();
 
 let scoreElement: HTMLHeadElement | null = null;
+
+// Element Creation-Section
 
 function createPlayer() {
     return {
@@ -16,13 +19,13 @@ function createPlayer() {
         width: 20,
         height: 20,
         color: '#FFF',
-        jumpHeight: 15,
+        jumpHeight: 25,
     };
 }
 
 function createObstacle() {
     return {
-        x: Math.random() * (500 - 400) + 400,
+        x: 800,
         y: (canvas.height / 4) * 3,
         width: Math.random() * (50 - 10) + 10,
         height: 20,
@@ -32,9 +35,15 @@ function createObstacle() {
 }
 
 function spawnNewObstacle() {
-    if (obstacle.x <= canvas.width )
+    if (obstacle.x <= -50) {
+        removeObstacle();
+        obstacle = createObstacle();
+    }
 }
 
+function removeObstacle() {
+    obstacle.x = canvas.width + Math.random() * 100;
+}
 
 function createStartGameHeading() {
     const headingText = 'press space to play!';
@@ -65,6 +74,14 @@ function removeStartGameHeading() {
         heading.remove();
     }
 }
+
+function createGameOverHeading() {
+    const headingText = 'GAME OVER <br> <br> press space to play again!';
+    const heading = createHeading(headingText);
+    document.body.appendChild(heading);
+}
+
+// Draw-Section
 
 function drawRectangle(
     x: number,
@@ -102,22 +119,56 @@ function draw() {
     }
 }
 
-function handleKeyDown(event: KeyboardEvent) {
-    switch (event.key) {
-        case 'Space':
-            player.y += player.jumpHeight;
-    }
-}
-
+// Movement-Section
 function moveObstacle() {
     if (gameStarted) {
         obstacle.x += obstacle.speed;
     }
 }
 
+function jump() {
+    if (!isJumping) {
+        player.y -= player.jumpHeight;
+        isJumping = true;
+        setTimeout(() => {
+            player.y += player.jumpHeight;
+            isJumping = false;
+        }, 700);
+    }
+}
+
+// check hit / update score
+function checkHit() {
+    if (
+        player.x < obstacle.x + obstacle.width &&
+        player.x + player.width > obstacle.x &&
+        player.y < obstacle.y + obstacle.height &&
+        player.y + player.height > obstacle.y
+    ) {
+        createGameOverHeading();
+        gameStarted = false;
+        removeObstacle();
+    } else {
+        score++;
+        updateScore();
+    }
+}
+
+function updateScore() {
+    if (gameStarted) {
+        if (!scoreElement) {
+            scoreElement = createHeading('');
+            document.body.appendChild(scoreElement);
+        }
+        scoreElement.textContent = 'score: ' + score;
+    }
+}
+// GameLoop-Section
 function gameLoop() {
     draw();
     moveObstacle();
+    spawnNewObstacle();
+    checkHit();
 }
 
 // Main Program
@@ -126,6 +177,9 @@ window.addEventListener('keydown', (event) => {
     if (event.code === 'Space' && !gameStarted) {
         gameStarted = true;
         removeStartGameHeading();
+    }
+    if (event.code === 'Space' && gameStarted) {
+        jump();
     }
 });
 setInterval(gameLoop, 1000 / 60);
