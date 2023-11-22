@@ -3,6 +3,7 @@ var ctx = canvas.getContext('2d');
 var gameStarted = false;
 var score = 0;
 var isJumping = false;
+var jumpDuration = 0;
 var player = createPlayer();
 var obstacle = createObstacle();
 var scoreElement = null;
@@ -102,15 +103,17 @@ function resetObstacleSpeed() {
 function jump() {
     if (!isJumping) {
         isJumping = true;
-        var jumpHeight_1 = player.jumpHeight;
+        jumpDuration = 0;
         var jumpInterval_1 = setInterval(function () {
-            player.y -= jumpHeight_1;
-            jumpHeight_1 -= 1;
-            if (jumpHeight_1 <= 0) {
+            if (player.y > 0) {
+                player.y -= player.jumpHeight * (1 + jumpDuration / 50);
+                jumpDuration++;
+            }
+            else {
                 clearInterval(jumpInterval_1);
-                setTimeout(function () {
-                    descend();
-                }, 150);
+                player.y = 0;
+                isJumping = false;
+                descend();
             }
         }, 20);
     }
