@@ -4,7 +4,6 @@ const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 let gameStarted = false;
 let score = 0;
 let isJumping = false;
-let jumpDuration = 0;
 
 const player = createPlayer();
 let obstacle = createObstacle();
@@ -145,17 +144,16 @@ function resetObstacleSpeed() {
 function jump() {
     if (!isJumping) {
         isJumping = true;
-        jumpDuration = 0;
-
+        let jumpHeight = player.jumpHeight;
         let jumpInterval = setInterval(() => {
-            if (player.y > 0) {
-                player.y -= player.jumpHeight * (1 + jumpDuration / 50);
-                jumpDuration++;
-            } else {
+            player.y -= jumpHeight;
+            jumpHeight -= 1;
+
+            if (jumpHeight <= 0) {
                 clearInterval(jumpInterval);
-                player.y = 0;
-                isJumping = false;
-                descend();
+                setTimeout(() => {
+                    descend();
+                }, 150);
             }
         }, 20);
     }
