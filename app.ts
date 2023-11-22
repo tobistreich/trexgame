@@ -19,7 +19,7 @@ function createPlayer() {
         width: 20,
         height: 20,
         color: '#FFF',
-        jumpHeight: 25,
+        jumpHeight: 10,
     };
 }
 
@@ -143,13 +143,32 @@ function resetObstacleSpeed() {
 
 function jump() {
     if (!isJumping) {
-        player.y -= player.jumpHeight;
         isJumping = true;
-        setTimeout(() => {
-            player.y += player.jumpHeight;
-            isJumping = false;
-        }, 600);
+        let jumpHeight = player.jumpHeight;
+        let jumpInterval = setInterval(() => {
+            player.y -= jumpHeight;
+            jumpHeight -= 1;
+
+            if (jumpHeight <= 0) {
+                clearInterval(jumpInterval);
+                setTimeout(() => {
+                    descend();
+                }, 150);
+            }
+        }, 20);
     }
+}
+
+function descend() {
+    let descentInterval = setInterval(() => {
+        if (player.y < (canvas.height / 4) * 3) {
+            player.y += 3; // Adjust the descent speed as needed
+        } else {
+            clearInterval(descentInterval);
+            player.y = (canvas.height / 4) * 3; // Set to the original height
+            isJumping = false;
+        }
+    }, 20);
 }
 
 // check hit / update score
