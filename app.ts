@@ -73,12 +73,20 @@ function removeStartGameHeading() {
     if (heading) {
         heading.remove();
     }
+
+    createScoreElement();
+}
+
+function createScoreElement() {
+    scoreElement = createHeading('');
+    document.body.appendChild(scoreElement);
 }
 
 function createGameOverHeading() {
     const headingText = 'GAME OVER <br> <br> press space to play again!';
     const heading = createHeading(headingText);
     document.body.appendChild(heading);
+    removeScore();
 }
 
 // Draw-Section
@@ -146,11 +154,12 @@ function checkHit() {
         player.y + player.height > obstacle.y
     ) {
         createGameOverHeading();
-        gameStarted = false;
+        removeScore();
         removeObstacle();
-    } else {
-        score++;
-        updateScore();
+        gameStarted = false;
+    }
+    if () {
+        score += 10;
     }
 }
 
@@ -163,12 +172,19 @@ function updateScore() {
         scoreElement.textContent = 'score: ' + score;
     }
 }
+
+function removeScore() {
+    score = 0;
+    scoreElement?.remove();
+}
+
 // GameLoop-Section
 function gameLoop() {
     draw();
     moveObstacle();
     spawnNewObstacle();
     checkHit();
+    updateScore();
 }
 
 // Main Program
@@ -182,4 +198,5 @@ window.addEventListener('keydown', (event) => {
         jump();
     }
 });
+
 setInterval(gameLoop, 1000 / 60);

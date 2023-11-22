@@ -61,11 +61,17 @@ function removeStartGameHeading() {
     if (heading) {
         heading.remove();
     }
+    createScoreElement();
+}
+function createScoreElement() {
+    scoreElement = createHeading('');
+    document.body.appendChild(scoreElement);
 }
 function createGameOverHeading() {
     var headingText = 'GAME OVER <br> <br> press space to play again!';
     var heading = createHeading(headingText);
     document.body.appendChild(heading);
+    removeScore();
 }
 // Draw-Section
 function drawRectangle(x, y, width, height, color) {
@@ -105,12 +111,13 @@ function checkHit() {
         player.y < obstacle.y + obstacle.height &&
         player.y + player.height > obstacle.y) {
         createGameOverHeading();
-        gameStarted = false;
+        removeScore();
         removeObstacle();
+        gameStarted = false;
     }
-    else {
-        score++;
-        updateScore();
+    if (player.x < obstacle.x + obstacle.width &&
+        player.x < obstacle.x + obstacle.width - 1) {
+        score += 10;
     }
 }
 function updateScore() {
@@ -122,12 +129,17 @@ function updateScore() {
         scoreElement.textContent = 'score: ' + score;
     }
 }
+function removeScore() {
+    score = 0;
+    scoreElement === null || scoreElement === void 0 ? void 0 : scoreElement.remove();
+}
 // GameLoop-Section
 function gameLoop() {
     draw();
     moveObstacle();
     spawnNewObstacle();
     checkHit();
+    updateScore();
 }
 // Main Program
 createStartGameHeading();
