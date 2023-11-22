@@ -1,5 +1,5 @@
-const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
 let gameStarted = false;
 let score = 0;
@@ -11,69 +11,95 @@ let scoreElement: HTMLHeadElement | null = null;
 
 function createPlayer() {
     return {
-        x: canvas.width / 2 - 120,
-        y: canvas.height / 4,
+        x: canvas.width / 2 - 240,
+        y: (canvas.height / 4) * 3,
         width: 20,
         height: 20,
-        color: "#FFF",
+        color: '#FFF',
         jumpHeight: 15,
-    }
+    };
 }
 
 function createObstacle() {
     return {
-        x: Math.random() * (900 - 400) + 400,
-        y: canvas.height / 3,
+        x: Math.random() * (500 - 400) + 400,
+        y: (canvas.height / 4) * 3,
         width: Math.random() * (50 - 10) + 10,
         height: 20,
-        color: "#FFF",
-        speed: 20,
+        color: '#FFF',
+        speed: -2,
     };
 }
 
+function spawnNewObstacle() {
+    if (obstacle.x <= canvas.width )
+}
+
+
 function createStartGameHeading() {
-    const headingText = "press space to play!<br><br>controls: w + s / ↑ + ↓";
+    const headingText = 'press space to play!';
     const heading = createHeading(headingText);
     document.body.appendChild(heading);
 
     // Blink every 0.5 seconds
     setInterval(() => {
-        heading.style.visibility = heading.style.visibility === 'hidden' ? 'visible' : 'hidden';
+        heading.style.visibility =
+            heading.style.visibility === 'hidden' ? 'visible' : 'hidden';
     }, 500);
 }
 
 function createHeading(text: string) {
-    const heading = document.createElement("h2");
+    const heading = document.createElement('h2');
     heading.innerHTML = text;
-    heading.style.position = "absolute";
-    heading.style.top = "6rem";
-    heading.style.color = "#FFF";
-    heading.style.fontFamily = "Monospace";
-    heading.style.textAlign = "center";
+    heading.style.position = 'absolute';
+    heading.style.top = '6rem';
+    heading.style.color = '#FFF';
+    heading.style.fontFamily = 'Monospace';
+    heading.style.textAlign = 'center';
     return heading;
 }
 
 function removeStartGameHeading() {
-    const heading = document.querySelector("h1");
+    const heading = document.querySelector('h2');
     if (heading) {
         heading.remove();
     }
 }
 
-function drawRectangle(x: number, y: number, width: number, height: number, color: string) {
+function drawRectangle(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: string,
+) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, width, height);
 }
 
 function draw() {
     // draw Playfield
-    drawRectangle(0, 0, canvas.width, canvas.height, "#000");
+    drawRectangle(0, 0, canvas.width, canvas.height, '#000');
 
     // draw Players
-    drawRectangle(player.x, player.y, player.width, player.height, player.color);
+    drawRectangle(
+        player.x,
+        player.y,
+        player.width,
+        player.height,
+        player.color,
+    );
 
     // draw Obstacles
-    drawRectangle(Math.random() * (900 - 400) + 400, canvas.height / 3, Math.random() * (50 - 10) + 10, 20, "#FFF");
+    if (gameStarted) {
+        drawRectangle(
+            obstacle.x,
+            obstacle.y,
+            obstacle.width,
+            obstacle.height,
+            obstacle.color,
+        );
+    }
 }
 
 function handleKeyDown(event: KeyboardEvent) {
@@ -85,7 +111,7 @@ function handleKeyDown(event: KeyboardEvent) {
 
 function moveObstacle() {
     if (gameStarted) {
-        obstacle.x += obstacle.speed
+        obstacle.x += obstacle.speed;
     }
 }
 
@@ -96,10 +122,10 @@ function gameLoop() {
 
 // Main Program
 createStartGameHeading();
-window.addEventListener("keydown", (event) => {
-    if (event.code === "Space" && !gameStarted) {
+window.addEventListener('keydown', (event) => {
+    if (event.code === 'Space' && !gameStarted) {
         gameStarted = true;
         removeStartGameHeading();
     }
-})
-setInterval(gameLoop, 1000 / 30);
+});
+setInterval(gameLoop, 1000 / 60);

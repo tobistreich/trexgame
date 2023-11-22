@@ -1,5 +1,5 @@
-var canvas = document.getElementById("pongCanvas");
-var ctx = canvas.getContext("2d");
+var canvas = document.getElementById('gameCanvas');
+var ctx = canvas.getContext('2d');
 var gameStarted = false;
 var score = 0;
 var player = createPlayer();
@@ -7,45 +7,46 @@ var obstacle = createObstacle();
 var scoreElement = null;
 function createPlayer() {
     return {
-        x: canvas.width / 2 - 120,
-        y: canvas.height / 4,
+        x: canvas.width / 2 - 240,
+        y: (canvas.height / 4) * 3,
         width: 20,
         height: 20,
-        color: "#FFF",
+        color: '#FFF',
         jumpHeight: 15,
     };
 }
 function createObstacle() {
     return {
-        x: Math.random() * (900 - 400) + 400,
-        y: canvas.height / 3,
+        x: Math.random() * (500 - 400) + 400,
+        y: (canvas.height / 4) * 3,
         width: Math.random() * (50 - 10) + 10,
         height: 20,
-        color: "#FFF",
-        speed: 20,
+        color: '#FFF',
+        speed: -2,
     };
 }
 function createStartGameHeading() {
-    var headingText = "press space to play!<br><br>controls: w + s / ↑ + ↓";
+    var headingText = 'press space to play!';
     var heading = createHeading(headingText);
     document.body.appendChild(heading);
     // Blink every 0.5 seconds
     setInterval(function () {
-        heading.style.visibility = heading.style.visibility === 'hidden' ? 'visible' : 'hidden';
+        heading.style.visibility =
+            heading.style.visibility === 'hidden' ? 'visible' : 'hidden';
     }, 500);
 }
 function createHeading(text) {
-    var heading = document.createElement("h2");
+    var heading = document.createElement('h2');
     heading.innerHTML = text;
-    heading.style.position = "absolute";
-    heading.style.top = "6rem";
-    heading.style.color = "#FFF";
-    heading.style.fontFamily = "Monospace";
-    heading.style.textAlign = "center";
+    heading.style.position = 'absolute';
+    heading.style.top = '6rem';
+    heading.style.color = '#FFF';
+    heading.style.fontFamily = 'Monospace';
+    heading.style.textAlign = 'center';
     return heading;
 }
 function removeStartGameHeading() {
-    var heading = document.querySelector("h1");
+    var heading = document.querySelector('h2');
     if (heading) {
         heading.remove();
     }
@@ -56,11 +57,13 @@ function drawRectangle(x, y, width, height, color) {
 }
 function draw() {
     // draw Playfield
-    drawRectangle(0, 0, canvas.width, canvas.height, "#000");
+    drawRectangle(0, 0, canvas.width, canvas.height, '#000');
     // draw Players
     drawRectangle(player.x, player.y, player.width, player.height, player.color);
     // draw Obstacles
-    drawRectangle(Math.random() * (900 - 400) + 400, canvas.height / 3, Math.random() * (50 - 10) + 10, 20, "#FFF");
+    if (gameStarted) {
+        drawRectangle(obstacle.x, obstacle.y, obstacle.width, obstacle.height, obstacle.color);
+    }
 }
 function handleKeyDown(event) {
     switch (event.key) {
@@ -73,3 +76,16 @@ function moveObstacle() {
         obstacle.x += obstacle.speed;
     }
 }
+function gameLoop() {
+    draw();
+    moveObstacle();
+}
+// Main Program
+createStartGameHeading();
+window.addEventListener('keydown', function (event) {
+    if (event.code === 'Space' && !gameStarted) {
+        gameStarted = true;
+        removeStartGameHeading();
+    }
+});
+setInterval(gameLoop, 1000 / 60);
