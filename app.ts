@@ -162,7 +162,7 @@ function jump() {
 function descend() {
     let descentInterval = setInterval(() => {
         if (player.y < (canvas.height / 4) * 3) {
-            player.y += 3; // Adjust the descent speed as needed
+            player.y += 4; // Adjust the descent speed as needed
         } else {
             clearInterval(descentInterval);
             player.y = (canvas.height / 4) * 3; // Set to the original height
