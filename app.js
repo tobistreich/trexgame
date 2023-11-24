@@ -8,12 +8,14 @@ var obstacle = createObstacle();
 var scoreElement = null;
 // Element Creation-Section
 function createPlayer() {
+    var playerImage = new Image();
+    playerImage.src = '/dino.png';
     return {
         x: canvas.width / 2 - 240,
-        y: (canvas.height / 4) * 3,
-        width: 20,
-        height: 20,
-        color: '#000',
+        y: (canvas.height / 4) * 3 - 43,
+        width: 40,
+        height: 43,
+        image: playerImage,
         jumpHeight: 10,
     };
 }
@@ -23,12 +25,12 @@ function createObstacle() {
         y: (canvas.height / 4) * 3,
         width: Math.random() * (35 - 1) + 1,
         height: 20,
-        color: '#000',
+        color: '#535353',
         speed: -2,
     };
 }
 function spawnNewObstacle() {
-    if (obstacle.x <= -50) {
+    if (obstacle.x + obstacle.width <= 0) {
         obstacle = createObstacle();
     }
 }
@@ -80,8 +82,8 @@ function drawRectangle(x, y, width, height, color) {
 function draw() {
     // draw Playfield
     drawRectangle(0, 0, canvas.width, canvas.height, '#F0F0F0');
-    // draw Players
-    drawRectangle(player.x, player.y, player.width, player.height, player.color);
+    // draw Player
+    ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
     // draw Obstacles
     if (gameStarted) {
         drawRectangle(obstacle.x, obstacle.y, obstacle.width, obstacle.height, obstacle.color);
@@ -114,20 +116,20 @@ function jump() {
 }
 function descend() {
     var descentInterval = setInterval(function () {
-        if (player.y < (canvas.height / 4) * 3) {
+        if (player.y < (canvas.height / 4) * 3 - 23) {
             player.y += 4; // Adjust the descent speed as needed
         }
         else {
             clearInterval(descentInterval);
-            player.y = (canvas.height / 4) * 3; // Set to the original height
+            player.y = (canvas.height / 4) * 3 - 23; // Set to the original height
             isJumping = false;
         }
     }, 20);
 }
 // check hit / update score
 function checkHit() {
-    if (player.x < obstacle.x + obstacle.width &&
-        player.x + player.width > obstacle.x &&
+    if (player.x + 5 < obstacle.x + obstacle.width &&
+        player.x + player.width - 15 > obstacle.x &&
         player.y < obstacle.y + obstacle.height &&
         player.y + player.height > obstacle.y) {
         createGameOverHeading();
@@ -164,14 +166,16 @@ function gameLoop() {
     updateScore();
 }
 // Main Program
-createStartGameHeading();
-window.addEventListener('keydown', function (event) {
-    if (event.code === 'Space' && !gameStarted) {
-        gameStarted = true;
-        removeStartGameHeading();
-    }
-    if (event.code === 'Space' && gameStarted) {
-        jump();
-    }
-});
-setInterval(gameLoop, 1000 / 60);
+player.image.onload = function () {
+    createStartGameHeading();
+    window.addEventListener('keydown', function (event) {
+        if (event.code === 'Space' && !gameStarted) {
+            gameStarted = true;
+            removeStartGameHeading();
+        }
+        if (event.code === 'Space' && gameStarted) {
+            jump();
+        }
+    });
+    setInterval(gameLoop, 1000 / 60);
+};
