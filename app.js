@@ -18,10 +18,12 @@ function createPlayer() {
     };
 }
 function createObstacle() {
+    var sizes = [10, 20, 30];
+    var selectedSize = sizes[Math.floor(Math.random() * sizes.length)];
     return {
         x: canvas.width,
         y: (canvas.height / 4) * 3,
-        width: Math.random() * (35 - 1) + 1,
+        width: selectedSize,
         height: 20,
         color: '#000',
         speed: -2,
