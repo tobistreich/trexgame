@@ -8,4 +8,5 @@ body {
 canvas {
     margin-top: 5rem;
     border-radius: 20px;
+    border: 2px solid black;
 }
