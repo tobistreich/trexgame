@@ -17,7 +17,7 @@ function createPlayer() {
     playerImage.src = '/dino.png';
     return {
         x: canvas.width / 2 - 240,
-        y: (canvas.height / 4) * 3 - 43,
+        y: (canvas.height / 4) * 3 - 23,
         width: 40,
         height: 43,
         image: playerImage,
@@ -26,11 +26,11 @@ function createPlayer() {
 }
 
 function createObstacle() {
-    const sizes = [10, 20, 30];
+    const sizes = [5, 10, 15, 20, 25, 30];
     const selectedSize = sizes[Math.floor(Math.random() * sizes.length)];
 
     return {
-        x: canvas.width,
+        x: 810,
         y: (canvas.height / 4) * 3,
         width: selectedSize,
         height: 20,
@@ -41,6 +41,7 @@ function createObstacle() {
 
 function spawnNewObstacle() {
     if (obstacle.x + obstacle.width <= 0) {
+        removeObstacle();
         obstacle = createObstacle();
     }
 }
@@ -182,13 +183,14 @@ function checkHit() {
     ) {
         createGameOverHeading();
         removeScore();
-        removeObstacle();
         resetObstacleSpeed();
+        removeObstacle();
         gameStarted = false;
     } else if (obstacle.x + obstacle.width < player.x - 40) {
         score += 10;
+        obstacle.speed *= 1.07;
         removeObstacle();
-        obstacle.speed *= 1.12;
+        obstacle = createObstacle();
     }
 }
 
