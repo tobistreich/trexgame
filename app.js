@@ -13,7 +13,7 @@ function createPlayer() {
         y: (canvas.height / 4) * 3,
         width: 20,
         height: 20,
-        color: '#FFF',
+        color: '#000',
         jumpHeight: 10,
     };
 }
@@ -21,9 +21,9 @@ function createObstacle() {
     return {
         x: canvas.width,
         y: (canvas.height / 4) * 3,
-        width: Math.random() * (50 - 5) + 5,
+        width: Math.random() * (35 - 1) + 1,
         height: 20,
-        color: '#FFF',
+        color: '#000',
         speed: -2,
     };
 }
@@ -50,7 +50,7 @@ function createHeading(text) {
     heading.innerHTML = text;
     heading.style.position = 'absolute';
     heading.style.top = '6rem';
-    heading.style.color = '#FFF';
+    heading.style.color = '#000';
     heading.style.fontFamily = 'Monospace';
     heading.style.textAlign = 'center';
     return heading;
@@ -79,7 +79,7 @@ function drawRectangle(x, y, width, height, color) {
 }
 function draw() {
     // draw Playfield
-    drawRectangle(0, 0, canvas.width, canvas.height, '#000');
+    drawRectangle(0, 0, canvas.width, canvas.height, '#F0F0F0');
     // draw Players
     drawRectangle(player.x, player.y, player.width, player.height, player.color);
     // draw Obstacles
